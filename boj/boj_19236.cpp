@@ -49,7 +49,10 @@ void print_data(){
 }
 
 void solve(){
-	
+	while(true){
+		move_fish();
+		
+	}
 }
 
 int main(){
