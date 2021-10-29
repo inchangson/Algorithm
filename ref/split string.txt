@@ -1,0 +1,19 @@
+
+vector<string> parsingString(string str)
+{
+    vector<string> rslt;
+    
+    string delimiter = " ";
+    
+    int start = 0;
+    int end = str.find(delimiter);
+    
+    while (end != -1) {
+        rslt.push_back(str.substr(start, end - start));
+        start = end + delimiter.size();
+        end = str.find(delimiter, start);
+    }
+    rslt.push_back(str.substr(start, end - start));
+    
+    return rslt;
+}
