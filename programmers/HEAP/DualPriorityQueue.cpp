@@ -3,6 +3,7 @@
 #include <queue>
 
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 
@@ -26,7 +27,7 @@ int heapSize;
 
 void initData(int dataSize){
     for(int idx = 0; idx < dataSize; ++idx){
-        isExist[idx] = 0;
+        isExist[idx] = false;
     }
     maxHeap = priority_queue<node, vector<node>, greater<>>();
     minHeap = priority_queue<node, vector<node>, less<>>();
@@ -40,39 +41,46 @@ vector<string> parsingString(string str)
     int delimIdx = str.find(" ");
     rslt.push_back(str.substr(0, delimIdx));
     rslt.push_back(str.substr(delimIdx + 1, str.size()));
+    
     return rslt;
 }
 
 void pushData(int val){
-    cout << "\n======pushData Start======\n";
+    //cout << "\n======pushData Start======\n";
     ++heapSize;
     isExist[heapSize] = true;
     minHeap.push({heapSize, val});
     maxHeap.push({heapSize, val});
     
     cout << heapSize << " " << val << endl;    
-    cout << "======pushData End======\n";
+    //cout << "======pushData End======\n";
 
 }
 
 int popMax(bool isSucceed){
+    cout << "======popMax Start======\n";
     int retVal = -1;
     isSucceed = false;
-    while(isExist[maxHeap.top().index] && !maxHeap.empty()){
-        maxHeap.pop();    
+    while(!isExist[maxHeap.top().index] && !maxHeap.empty()){
+        printf("index %d value %d\n", maxHeap.top().index, maxHeap.top().value);
+        maxHeap.pop();
     }
     if(maxHeap.empty()) return retVal;
     isSucceed = true;
     isExist[maxHeap.top().index] = false;
     retVal = maxHeap.top().value;
     maxHeap.pop();
+    
+    cout << "======popMax End======\n";
     return retVal;
 }
 
 int popMin(bool isSucceed){
+    cout << "======popMin Start======\n";
     int retVal = -1;
     isSucceed = false;
-    while(isExist[minHeap.top().index] && !minHeap.empty()){
+    while(!isExist[minHeap.top().index] && !minHeap.empty()){
+        printf("index %d value %d\n", minHeap.top().index, minHeap.top().value);
         minHeap.pop();    
     }
     if(minHeap.empty()) return retVal;
@@ -80,6 +88,8 @@ int popMin(bool isSucceed){
     isExist[minHeap.top().index] = false;
     retVal = minHeap.top().value;
     minHeap.pop();
+    
+    cout << "======popMin End======\n";
     return retVal;
 }
 
@@ -96,13 +106,15 @@ void executeOperation(string executionType, string executionVal){
 }
 
 void getAnswer(vector<int> & answer){
+    
+    cout << "\n======getAnswer Start======\n";
     int min;
     int max;
     bool isSucceed1;
     bool isSucceed2;
     min = popMin(isSucceed1);
     max = popMax(isSucceed2);
-    
+    cout << isSucceed1 << " " << isSucceed2 << endl;
     if(isSucceed1 && isSucceed2){
         answer.push_back(min);
         answer.push_back(max);
@@ -113,6 +125,7 @@ void getAnswer(vector<int> & answer){
         answer.push_back(0);
         answer.push_back(0);
     }
+    cout << "\n======getAnswer End======\n";
 }
 
 vector<int> solution(vector<string> operations) {
