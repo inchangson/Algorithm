@@ -2,7 +2,6 @@
 #include <vector>
 #include <queue>
 
-#include <iostream>
 #include <cstdio>
 
 using namespace std;
@@ -21,16 +20,17 @@ struct node {
 };
 
 bool isExist[MX_SZ];
-priority_queue<node, vector<node>, greater<>> maxHeap;
-priority_queue<node, vector<node>, less<>> minHeap;
+priority_queue<node, vector<node>, less<>> maxHeap;
+priority_queue<node, vector<node>, greater<>> minHeap;
+
 int heapSize;
 
 void initData(int dataSize){
     for(int idx = 0; idx < dataSize; ++idx){
         isExist[idx] = false;
     }
-    maxHeap = priority_queue<node, vector<node>, greater<>>();
-    minHeap = priority_queue<node, vector<node>, less<>>();
+    maxHeap = priority_queue<node, vector<node>, less<>>();
+    minHeap = priority_queue<node, vector<node>, greater<>>();
     heapSize = 0;
 }
 
@@ -46,50 +46,56 @@ vector<string> parsingString(string str)
 }
 
 void pushData(int val){
-    //cout << "\n======pushData Start======\n";
+    //printf("\n======pushData Start======\n");
     ++heapSize;
     isExist[heapSize] = true;
     minHeap.push({heapSize, val});
     maxHeap.push({heapSize, val});
     
-    cout << heapSize << " " << val << endl;    
-    //cout << "======pushData End======\n";
+    //printf("heapSize %d val %d\n", heapSize, val);
+    //printf("\n======pushData End======\n");
 
 }
 
-int popMax(bool isSucceed){
-    cout << "======popMax Start======\n";
+int popMax(bool & isSucceed){
+    //printf("\n======popMax Start======\n");
     int retVal = -1;
     isSucceed = false;
-    while(!isExist[maxHeap.top().index] && !maxHeap.empty()){
-        printf("index %d value %d\n", maxHeap.top().index, maxHeap.top().value);
+    while(!maxHeap.empty() && !isExist[maxHeap.top().index]){
+        //printf("index %d value %d\n", maxHeap.top().index, maxHeap.top().value);
         maxHeap.pop();
     }
     if(maxHeap.empty()) return retVal;
     isSucceed = true;
+    
     isExist[maxHeap.top().index] = false;
     retVal = maxHeap.top().value;
     maxHeap.pop();
     
-    cout << "======popMax End======\n";
+    //printf("pop -> index %d value %d\n", maxHeap.top().index, maxHeap.top().value);
+    //printf("\n======popMax End======\n");
     return retVal;
 }
 
-int popMin(bool isSucceed){
-    cout << "======popMin Start======\n";
+int popMin(bool & isSucceed){
+    //printf("\n======popMin Start======\n");
     int retVal = -1;
     isSucceed = false;
-    while(!isExist[minHeap.top().index] && !minHeap.empty()){
-        printf("index %d value %d\n", minHeap.top().index, minHeap.top().value);
+    while(!minHeap.empty() && !isExist[minHeap.top().index]){
+        //printf("index %d value %d\n", minHeap.top().index, minHeap.top().value);
         minHeap.pop();    
     }
     if(minHeap.empty()) return retVal;
+    
     isSucceed = true;
     isExist[minHeap.top().index] = false;
     retVal = minHeap.top().value;
+    
+    //printf("pop -> index %d value %d\n", minHeap.top().index, minHeap.top().value);
+    
     minHeap.pop();
     
-    cout << "======popMin End======\n";
+    //printf("\n======popMax End======\n");
     return retVal;
 }
 
@@ -107,17 +113,15 @@ void executeOperation(string executionType, string executionVal){
 
 void getAnswer(vector<int> & answer){
     
-    cout << "\n======getAnswer Start======\n";
     int min;
     int max;
     bool isSucceed1;
     bool isSucceed2;
     min = popMin(isSucceed1);
     max = popMax(isSucceed2);
-    cout << isSucceed1 << " " << isSucceed2 << endl;
     if(isSucceed1 && isSucceed2){
-        answer.push_back(min);
         answer.push_back(max);
+        answer.push_back(min);
     }else if(isSucceed1 && !isSucceed2){
         answer.push_back(min);
         answer.push_back(min);
@@ -125,7 +129,6 @@ void getAnswer(vector<int> & answer){
         answer.push_back(0);
         answer.push_back(0);
     }
-    cout << "\n======getAnswer End======\n";
 }
 
 vector<int> solution(vector<string> operations) {
@@ -135,7 +138,7 @@ vector<int> solution(vector<string> operations) {
     
     vector<string> operation;
     for(int idx = 0; idx < dataSize; ++idx){
-        operation = parsingString(operations[idx]);
+        vector<string> operation = parsingString(operations[idx]);
         executeOperation(operation[0], operation[1]);
     }
     getAnswer(answer);
