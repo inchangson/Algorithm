@@ -4,82 +4,78 @@
 
 using namespace std;
 
-constexpr int MX_CNT = 100;
-constexpr int NONE = 0;
-
 constexpr int ISLAND1 = 0;
 constexpr int ISLAND2 = 1;
-constexpr int COST_IDX = 2;
+constexpr int COST = 2;
 
-int islandCnt;
-int states[MX_CNT];
-int minCost;
+vector<int> islandID;
+int costsSize;
+int minBridgeCnt;
 
-vector<vector<int>> bridgeCosts;
-
-void initData(){
-    islandCnt = 0;
-    minCost = 0x7FFFFFFF;
-    for(int idx = 0; idx < MX_CNT; ++idx){
-        states[idx] = NONE;
-    }
+void printIslandID(){
+    printf("\n");
+    for(int n : islandID){
+        printf("%d\t", n);
+    }printf("\n");
 }
 
-bool checkAllConnected(){
-    int islandNo = states[0];
-    if(islandNo == 0)   return false;
-    for(int idx = 0; idx < islandCnt; ++idx){
-        if(states[idx] != islandNo)    return false;
-    }
-    return true;
+bool cmp(vector<int> a, vector<int> b){
+    return (a[2] < b[2]);
 }
 
-void connectIsland(int curCost, int curIdx, int curIslandNo){
-    if(curIdx == islandCnt){
-        if(checkAllConnected()){
-            if(minCost > curCost)   minCost = curCost;
-        }
-        return;
+int getParent(int node) {
+    if(islandID[node] == node) return node;
+    return islandID[node] = getParent(islandID[node]);
+}
+
+int getIslandID(int island){
+    int & idx = islandID[island];
+    while(islandID[idx] != idx){
+        idx = islandID[idx];
     }
-    connectIsland(curCost, curIdx + 1, curIslandNo + 1);
-                  
-    int island1 = bridgeCosts[curIdx][ISLAND1];
-    int island2 = bridgeCosts[curIdx][ISLAND2];
-    int preIsland1 = states[island1];
-    int preIsland2 = states[island2];
+    return idx;
+}
+
+int buildBridge(int curIdx, int bridgeCnt, int curCost, const vector<vector<int>> & costs){
+    if(curIdx == costsSize)  return curCost;
+    //if(bridgeCnt == minBridgeCnt)    return curCost;    
+    printIslandID();
     
-    if(preIsland1 && preIsland2){
-        vector<int> tmpStates;
-        tmpStates.reserve(islandCnt);
-        for(int idx = 0; idx < islandCnt; ++idx){
-            tmpStates.push_back(states[idx]);
-            if(states[idx] == states[island1])  states[idx] = states[island2];
-        }
-        connectIsland(curCost + bridgeCosts[curIdx][COST_IDX], curIdx + 1, curIslandNo + 1);
-        for(int idx = 0; idx < islandCnt; ++idx){
-            states[idx] = tmpStates[idx];
-        }
-    }else{        
-        if(preIsland1){
-            states[island2] = states[island1];
-        }else if(preIsland2){
-            states[island1] = states[island2];
-        }else{
-            states[island1] = states[island2] = curIslandNo;
-        }
-        connectIsland(curCost + bridgeCosts[curIdx][COST_IDX], curIdx + 1, curIslandNo + 1);   
-        states[island1] = preIsland1;
-        states[island2] = preIsland2;
+    int island1 = getParent(costs[curIdx][ISLAND1]);
+    int island2 = getParent(costs[curIdx][ISLAND2]);
+    
+    if(island1 == island2)
+        return buildBridge(curIdx + 1, bridgeCnt, curCost, costs);
+    curCost += costs[curIdx][COST];
+    
+    if(island1 < island2){
+        islandID[island2] = island1;
     }
+    else{
+        islandID[island1] = island2;
+    }
+    printf("build between %d and %d with %d cost\n", island1, island2, costs[curIdx][COST]);
+    
+    return buildBridge(curIdx + 1, bridgeCnt + 1, curCost, costs);
 }
 
 int solution(int n, vector<vector<int>> costs) {
+    
     int answer = 0;
-    initData();    
-    islandCnt = n; 
-    bridgeCosts = vector<vector<int>>(costs);
-    connectIsland(0, 0, 1);
-    bridgeCosts.clear();
-    answer = minCost;
+    
+    //sort costs array
+    sort(costs.begin(), costs.end(), cmp);
+    
+    costsSize = costs.size();
+    minBridgeCnt = n - 1;
+    
+    //initialize islandID array
+    islandID = vector<int>(n);
+    int val = 0;
+    for(int idx = 0; idx < n; ++idx){
+        islandID[idx] = idx;
+    }
+    answer = buildBridge(0, 0, 0, costs);
+    
     return answer;
 }
