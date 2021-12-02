@@ -1,46 +1,70 @@
-#include <algorithm>
-#include <queue>
+#include <string>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
-int solution(int n, vector<vector<int>> edge) {
-    vector<vector<int>> graph(n+1);
-    vector<int> counts(n+1, 0);
-    vector<bool> visited(n+1, false);
-    queue<int> queue;
+constexpr int MX = 20000;
 
-    int answer = 0;
-    for (int i = 0; i < edge.size(); i++) {
-        graph[edge[i][0]].push_back(edge[i][1]);
-        graph[edge[i][1]].push_back(edge[i][0]);
-    }
+bool relation[MX + 1][MX + 1];
 
-    queue.push(1);
-    visited[1] = true;
+struct node{
+    int idx, d;
+};
 
-    while(!queue.empty()) {
-        int node = queue.front();
-        queue.pop();
-
-        for (int i = 0; i < graph[node].size(); i++) {
-            if (!visited[graph[node][i]]) {
-                int currentCount = counts[node] + 1;
-                visited[graph[node][i]] = true;
-                counts[graph[node][i]] = currentCount;
-                queue.push(graph[node][i]);
-            }
+void makeRelationArr(int n, const vector<vector<int>> & edge){
+    for(int i = 1; i <= n; ++i){
+        for(int j = 1; j <= n ; ++j){
+            relation[i][j] = false;
         }
     }
-
-    sort(counts.begin(), counts.end(), greater<int>());
-    for (auto cnt : counts) {
-        if (counts[0] != cnt) break;
-        answer++;
+    
+    int node1, node2;
+    for(int idx = 0; idx < edge.size(); ++idx){
+        node1 = edge[idx][0];
+        node2 = edge[idx][1];
+        relation[node1][node2] = relation[node2][node1] = true;        
     }
-    return answer;
 }
 
- 0xd00d00 blog's content
- Hope this help you :) 
- original content : https://0xd00d00.github.io/2021/07/10/programmers_distance.html
+int searchLongestCount(int n){
+    vector<bool> visited(n + 1);
+    
+    queue<node> q;
+    
+    q.push({1, 0});
+    visited[1] = true;
+    
+    int longest = -1;
+    int longestCnt = 0;
+    while(!q.empty()){
+        node currentNode = q.front();
+        q.pop();
+        
+        int curIdx = currentNode.idx;
+        int curD = currentNode.d;
+        
+        if(longest == curD){
+            ++longestCnt;
+        }
+        else if(longest < curD){
+            longest = curD;
+            longestCnt = 1;
+        }
+        
+        for(int nextIdx = 1; nextIdx <= n; ++nextIdx){
+            if(!relation[curIdx][nextIdx])  continue;
+            if(visited[nextIdx])    continue;
+            visited[nextIdx] = true;
+            q.push({nextIdx, curD + 1});
+        }
+    }
+    return longestCnt;
+}
+
+int solution(int n, vector<vector<int>> edge) {
+    int answer = 0;
+    makeRelationArr(n, edge);
+    answer = searchLongestCount(n);
+    return answer;
+}
