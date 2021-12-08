@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <cstdlib>
 
 using namespace std;
 
@@ -14,10 +15,6 @@ int m;
 int costs[MX_M][3];
 int parents[MX_N + 1];
 int ans;
-
-bool myCmp(int* a, int* b){
-	return a[2] < b[2];
-}
 
 void initData(){
 	ans = 0;
@@ -42,6 +39,15 @@ int getParent(int child){
 
 void solve(){
 	//sort(costs, costs + m, myCmp);
+	
+	std::qsort(costs, 10, sizeof(*costs),
+        [](const void *arg1, const void *arg2)->int
+        {
+            int const *lhs = static_cast<int const*>(arg1);
+            int const *rhs = static_cast<int const*>(arg2);
+            return lhs[2] - rhs[2];
+        });
+
 	
 	int totalCosts = 0;
 	for(int idx = 0; idx < m; ++idx){
