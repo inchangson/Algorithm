@@ -5,6 +5,16 @@
 using namespace std;
 
 bool isPossibleCase(int dist, vector<int> rocks, int n){
+    //printf("dist %d n %d\n", dist, n);
+    int now = rocks[0];
+    for(int next = 1; next < rocks.size(); ++next){
+        if(now < dist){
+            now += rocks[next];
+            if(n-- == 0)  return false;
+        }else{
+            now = rocks[next];
+        }
+    }
     return true;
 }
 
@@ -27,7 +37,6 @@ int solution(int distance, vector<int> rocks, int n) {
         mid = (hi + lo) / 2;
         if(isPossibleCase(mid, rocks, n) == true){
             lo = mid + 1;
-            printf("lo %d hi %d mid %d\n", lo, hi, mid);
             answer = mid;
         }
         else{
