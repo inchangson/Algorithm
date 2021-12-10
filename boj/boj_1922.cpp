@@ -1,3 +1,5 @@
+//kruskal
+
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
