@@ -1,59 +1,54 @@
 #include <string>
 #include <vector>
-
-#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-bool isCorrectInput(char c){
-    if(c == '-' || c == '_' || c == '.')    return true;
-    if(c >= '0' && c <= '9')    return true;
-    if(c >= 'a' && c <= 'z')    return true;
-    return false;
+struct Stage{
+    int num;
+    int numer;
+    int denom;
+};
+
+bool stageCmp(Stage & s1, Stage & s2){
+    /*double d1 = (double)s1.numer/ s1.denom;
+    double d2 = (double)s2.numer/ s2.denom;
+
+    if(d1 == d2) return s1.num < s2.num;
+    else    return d1 > d2;*/
+
+    if(s1.numer * s2.denom == s1.denom * s2.numer){
+        return s1.num < s2.num;
+    }
+    return s1.numer * s2.denom > s1.denom * s2.numer;
 }
 
-string solution(string new_id) {
-    string answer = "";
-    
-    const string DEFAULT_ID = "a";
-    const int MX_LENG = 15;
-    const int MIN_LENG = 3;
-    
-    int curLeng = 0;
-    
-    for(int idx = 0; idx < new_id.size(); ++idx){
-        char c = new_id[idx];
-        if(curLeng >= MX_LENG){
-            break;
+vector<int> solution(int N, vector<int> players) {
+    vector<int> answer;
+    vector<Stage> stages;
+
+    sort(players.begin(), players.end());
+
+    int stageIdx = 0;
+    int totalCnt = players.size();
+    for(int sNum = 1; sNum <= N; ++sNum){
+        int cnt = 0;
+        while(stageIdx < players.size() &&
+              sNum == players[stageIdx]){
+            ++stageIdx;
+            ++cnt;
         }
-        if(c == '.'){
-            if(curLeng == 0)    continue;
-            if(answer.back() == '.')  continue;
-        }
-        if(c >= 'A' && c <= 'Z'){
-            c |= (0x1u << 5);
-        }
-        if(isCorrectInput(c) == false){
-            continue;
-        }
-        answer += c;
-        curLeng++;
+        totalCnt = totalCnt <= 0 ? 1 : totalCnt;
+        stages.push_back({sNum, cnt, totalCnt});
+        totalCnt -= cnt;
     }
-    
-    if(answer.empty()){
-        answer = "a";
-        curLeng++;
+
+    sort(stages.begin(), stages.end(), stageCmp);
+
+    for(Stage s : stages){
+        //printf("%d %d %d %lf\n", s.num, s.numer, s.denom, (double)s.numer/s.denom);
+        answer.push_back(s.num);
     }
-    
-    if(answer.back() == '.'){
-        answer.pop_back();
-        curLeng--;
-    }
-    
-    while(curLeng < MIN_LENG){
-        answer += answer.back();
-        curLeng++;    
-    }
-    
+
     return answer;
 }
