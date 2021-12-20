@@ -4,24 +4,33 @@
 
 using namespace std;
 
-void putInBasket(int d, int cnt, stack<int> & basket){
-    static int ftnCnt = 0;
-    ftnCnt++;
+void printMap(vector<vector<int>> & board){
+    printf("=======printMap==========\n");
+    int mapSize = board.size();
+    for(int r = 0; r < mapSize; ++r){
+        for(int c = 0; c < mapSize; ++c){
+            printf("%2d", board[r][c]);   
+        }
+        printf("\n");
+    }
+}
+
+void putInBasket(int d, int & cnt, stack<int> & basket){
     if(basket.empty()){
         basket.push(d);
         
-        printf("ftnCnt %d d %d(empty)\n", ftnCnt, d);
+        //printf("d %d push(empty)\n", d);
         return;
     }
     int lastDoll = basket.top();
     if(d == lastDoll){
-        ++cnt;
-        printf("cnt %d d %d\n", ftnCnt, d);
+        cnt += 2;
+        //printf("d %d pop\n", d);
         basket.pop();
     }
     else{
         basket.push(d);
-        printf("cnt %d d %d\n", ftnCnt, d);
+        //printf("d %d push\n", d);
     }
 }
 
@@ -29,12 +38,14 @@ int solution(vector<vector<int>> board, vector<int> moves) {
     int answer = 0;
     stack<int> basket;
     int boardSize = board.size();
+    //printMap(board);
     for(int m : moves){
         for(int c = 0; c < boardSize; ++c){
-            int d = board[c][m - 1];
+            int & d = board[c][m - 1];
             if(d == 0)  continue;
             putInBasket(d, answer, basket);
             d = 0;
+            //printMap(board);
             break;
         }    
     }
