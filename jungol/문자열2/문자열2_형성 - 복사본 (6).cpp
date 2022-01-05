@@ -1,25 +1,26 @@
 #include <stdio.h>
+#include <string.h>
 
 int main(){
-	
-	const int MX = 100;
-	
-	char str1[MX];
-	char str2[MX];
-	
-	int n;
-	
+	char str1[100], str2[100];
+	int n, idx;
+	int isStr2Done = 0;
+
 	scanf("%s %s %d", str1, str2, &n);
-	printf("%s%s\n", str1, str2);
+	sprintf(str1, "%s%s", str1, str2);
 	
-	char ch;
-	int isStr1End = 0;
-	for(int i = 0; str2[i] != '\0'; ++i){
-		if(!isStr1End && str1[i] == '\0') isStr1End = 1;
-		if(i >= n || isStr1End) 	ch = str2[i];
-		else        				ch = str1[i];
-		putchar(ch);
+	printf("%s\n", str1);
+	
+	for(idx = 0; idx < n; ++idx){
+		printf("%c", str1[idx]);
+	}
+	
+	if(strlen(str2) < n)    return 0;
+	
+	while(str2[idx] != '\0'){
+		printf("%c", str2[idx++]);
 	}
 	printf("\n");
+	
 	return 0;
 }
