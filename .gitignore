@@ -1,3 +1,4 @@
 *.exe
 *.replit
 /replit_env
+*.bash
