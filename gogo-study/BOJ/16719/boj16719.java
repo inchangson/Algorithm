@@ -32,7 +32,7 @@ public class boj16719 {
 
     private static int findFastestIdx(int start, int end){
         char a = 'Z';
-        int targetIdx = 0;
+        int targetIdx = start;
         for(int idx = start; idx < end; idx++){
             char cur = opening.charAt(idx);
             if (cur < a){
