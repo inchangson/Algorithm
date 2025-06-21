@@ -3,26 +3,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class 가장_큰_수 {
-  int[] getSortedArray(int[] src) {
-    List<Integer> ret = Arrays.stream(src)
-        .boxed().sorted((a, b) -> {
-          String s1 = String.valueOf(a) + String.valueOf(b);
-          String s2 = String.valueOf(b) + String.valueOf(a);
-          return s2.compareTo(s1);
-        }).collect(Collectors.toList());
-
-    return ret.stream().mapToInt(Integer::valueOf).toArray();
-  }
   public String solution(int[] numbers) {
-    int[] sorted = getSortedArray(numbers);
-    StringBuffer sb = new StringBuffer();
+    // 1. int[] → String[] 변환
+    String[] arr = new String[numbers.length];
+    for (int i = 0; i < numbers.length; i++) {
+      arr[i] = String.valueOf(numbers[i]);
+    }
 
-    if (sorted[0] == 0) {
-      sb.append(0);
-    } else {
-      for (int s : sorted) {
-        sb.append(s);
-      }
+    // 2. 커스텀 정렬: (s1, s2) -> (s2+s1).compareTo(s1+s2)
+    Arrays.sort(arr, (s1, s2) -> (s2 + s1).compareTo(s1 + s2));
+
+    // 3. 모든 요소가 0인 경우 처리
+    if (arr[0].equals("0")) {
+      return "0";
+    }
+
+    // 4. 문자열 조합
+    StringBuilder sb = new StringBuilder();
+    for (String s : arr) {
+      sb.append(s);
     }
 
     return sb.toString();
@@ -79,3 +78,20 @@ public class 가장_큰_수 {
 //테스트 13 〉	통과 (5.97ms, 85.7MB)
 //테스트 14 〉	통과 (4.37ms, 73.8MB)
 //테스트 15 〉	통과 (4.35ms, 82.6MB)
+
+// String array 먼저 생성해서 테스트
+//테스트 1 〉	통과 (138.29ms, 137MB)
+//테스트 2 〉	통과 (71.53ms, 100MB)
+//테스트 3 〉	통과 (186.59ms, 151MB)
+//테스트 4 〉	통과 (16.40ms, 89.2MB)
+//테스트 5 〉	통과 (130.37ms, 116MB)
+//테스트 6 〉	통과 (128.60ms, 107MB)
+//테스트 7 〉	통과 (1.58ms, 73.8MB)
+//테스트 8 〉	통과 (1.69ms, 91.2MB)
+//테스트 9 〉	통과 (1.83ms, 82.2MB)
+//테스트 10 〉	통과 (2.58ms, 92.1MB)
+//테스트 11 〉	통과 (2.02ms, 77.8MB)
+//테스트 12 〉	통과 (1.56ms, 72.6MB)
+//테스트 13 〉	통과 (1.57ms, 92.4MB)
+//테스트 14 〉	통과 (1.49ms, 89.5MB)
+//테스트 15 〉	통과 (1.63ms, 79.8MB)
