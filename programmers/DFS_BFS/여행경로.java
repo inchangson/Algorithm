@@ -8,7 +8,7 @@ public class 여행경로 {
 
   void initData(String[][] tickets) {
     flights = new LinkedList<>();
-    for (String[] ticket : tickets) flights.add(ticket);
+    flights.addAll(Arrays.asList(tickets));
     answer = new LinkedList<>();
   }
 
