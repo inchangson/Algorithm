@@ -9,10 +9,11 @@ public class No_2 {
   boolean canSolve(int level, int[] diffs, int[] times, long limit) {
     long clock = 0;
     for (int curIdx = 0; curIdx < diffs.length; curIdx++) {
-      if (diffs[curIdx] > level) {
-        int cnt = diffs[curIdx] - level;
-        clock += (times[curIdx] + getPrev(curIdx, times)) * cnt;
-      }
+
+      // max(0, diffs[curIdx] - level) 로 함
+      //integer multiplication implicitly cast to long
+      long cnt = Math.max(0, diffs[curIdx] - level);
+      clock += (long) (times[curIdx] + getPrev(curIdx, times)) * cnt;
       clock += times[curIdx];
 
       if (clock > limit) {

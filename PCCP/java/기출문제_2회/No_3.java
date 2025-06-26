@@ -18,6 +18,9 @@ public class No_3 {
 
     @Override
     public boolean equals(Object o1) {
+      if (!(o1 instanceof State)) {
+        return false;
+      }
       State that = (State) o1;
       return this.r == that.r && this.c == that.c;
     }
@@ -43,7 +46,8 @@ public class No_3 {
       int[] from = points[route[cur] - 1];
       int[] to = points[route[cur + 1] - 1];
 
-      int dr = from[R] < to[R] ? 1 : -1;
+//      int dr = from[R] < to[R] ? 1 : -1;// 절댓값으로 나누기로도 구현 가능
+      int dr = (from[R] - to[R])/ Math.abs(from[R] - to[R]);
       for (int r = from[R]; r != to[R]; r += dr) {
         history.add(new State(r, from[C], clock++));
       }
