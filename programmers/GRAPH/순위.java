@@ -10,13 +10,13 @@ public class 순위 {
   void printBoard() {
     for (int i = 1; i <= boxerCnt; i++) {
       for (int j = 1; j <= boxerCnt; j++) {
-        System.out.print(String.format("%2d", board[i][j]));
+        System.out.printf("%2d", board[i][j]);
       }
       System.out.println();
     }
   }
 
-  void initData(int n, int[][] results) {
+  void initData(int n) {
     boxerCnt = n;
     board = new int[n + 1][n + 1];
     // printBoard();
@@ -29,30 +29,19 @@ public class 순위 {
           .filter(elem -> elem != NA)
           .count();
       if (cnt == (boxerCnt - 1)) {
-        // System.out.println("i" + i);
         ret++;
       }
     }
     return ret;
   }
 
-  void updateWinner(int target, int current, boolean[] checked) {
-    board[target][current] = WIN;
+  void updateResult(int target, int current, int result, boolean[] checked) {
+    board[target][current] = result;
     checked[current] = true;
     for (int next = 1; next <= boxerCnt; next++) {
       if (checked[next])  continue;
-      if (board[current][next] == WIN)
-        updateWinner(target, next, checked);
-    }
-  }
-
-  void updateLoser(int target, int current, boolean[] checked) {
-    board[target][current] = LOSE;
-    checked[current] = true;
-    for (int next = 1; next <= boxerCnt; next++) {
-      if (checked[next])  continue;
-      if (board[current][next] == LOSE)
-        updateLoser(target, next, checked);
+      if (board[current][next] == result)
+        updateResult(target, next, result, checked);
     }
   }
 
@@ -60,21 +49,18 @@ public class 순위 {
     for (int[] result : results) {
       int winner = result[0];
       int loser = result[1];
-      boolean[] winnerCheck = new boolean[boxerCnt + 1];
-      updateWinner(winner, loser, winnerCheck);
-      boolean[] loserCheck = new boolean[boxerCnt + 1];
-      updateLoser(loser, winner, loserCheck);
+      boolean[] checked = new boolean[boxerCnt + 1];
+      updateResult(winner, loser, WIN, checked);
+      updateResult(loser, winner, LOSE, checked);
     }
   }
 
   public int solution(int n, int[][] results) {
-    initData(n, results);
+    initData(n);
 
     updateBoard(results);
     updateBoard(results);
-    // printBoard();
 
     return getAnswer();
   }
-
 }
