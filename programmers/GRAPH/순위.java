@@ -8,6 +8,7 @@ public class 순위 {
   int boxerCnt;
 
   void printBoard() {
+    System.out.printf("=============\n");
     for (int i = 1; i <= boxerCnt; i++) {
       for (int j = 1; j <= boxerCnt; j++) {
         System.out.printf("%2d", board[i][j]);
@@ -16,11 +17,18 @@ public class 순위 {
     }
   }
 
-  void initData(int n) {
+  void initData(int n, int[][] results) {
     boxerCnt = n;
     board = new int[n + 1][n + 1];
+    for (int[] result : results) {
+      int w = result[0];
+      int l = result[1];
+      board[w][l] = WIN;
+      board[l][w] = LOSE;
+    }
     // printBoard();
   }
+
 
   int getAnswer() {
     int ret = 0;
@@ -35,32 +43,22 @@ public class 순위 {
     return ret;
   }
 
-  void updateResult(int target, int current, int result, boolean[] checked) {
-    board[target][current] = result;
-    checked[current] = true;
-    for (int next = 1; next <= boxerCnt; next++) {
-      if (checked[next])  continue;
-      if (board[current][next] == result)
-        updateResult(target, next, result, checked);
-    }
-  }
-
-  void updateBoard(int[][] results) {
-    for (int[] result : results) {
-      int winner = result[0];
-      int loser = result[1];
-      boolean[] checked = new boolean[boxerCnt + 1];
-      updateResult(winner, loser, WIN, checked);
-      updateResult(loser, winner, LOSE, checked);
-    }
-  }
-
   public int solution(int n, int[][] results) {
-    initData(n);
+    initData(n, results);
 
-    updateBoard(results);
-    updateBoard(results);
-
+    for (int k = 1; k <= n; k++) {
+      for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+          if (board[i][k] == WIN && board[k][j] == WIN) {
+            board[i][j] = WIN;
+          }
+          if (board[i][k] == LOSE && board[k][j] == LOSE) {
+            board[i][j] = LOSE;
+          }
+        }
+      }
+    }
+    // printBoard();
     return getAnswer();
   }
 }
