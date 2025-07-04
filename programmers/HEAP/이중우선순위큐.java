@@ -11,25 +11,28 @@ public class 이중우선순위큐 {
       String[] splited = operation.split(" ");
       String option = splited[0];
       int value = Integer.parseInt(splited[1]);
-      if ("D".equals(splited[0])) {
-        if (maxValues.isEmpty()) {
-          continue;
-        }
-        Integer target;
-        if (value == 1) {// 최댓값 삭제
-          target = maxValues.poll();
-        } else {// 최솟값 삭제
-          target = minValues.poll();
-        }
-        maxValues.remove(target);
-        minValues.remove(target);
-      } else {// 값 삽입
+
+      if ("I".equals(option)) {
         minValues.offer(value);
         maxValues.offer(value);
+        continue;
       }
+
+      if (maxValues.isEmpty() || minValues.isEmpty()) {
+        continue;
+      }
+
+      Integer target;
+      if (value == 1) {// 최댓값 삭제
+        target = maxValues.poll();
+      } else {// 최솟값 삭제
+        target = minValues.poll();
+      }
+      maxValues.remove(target);
+      minValues.remove(target);
     }
 
-    if (!maxValues.isEmpty()) {
+    if (!maxValues.isEmpty() && !minValues.isEmpty()) {
       answer[0] = maxValues.poll();
       answer[1] = minValues.poll();
     }
